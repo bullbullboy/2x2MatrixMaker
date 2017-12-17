@@ -1,0 +1,124 @@
+<html>
+<form name='mainForm' method="post" action="example.cgi">
+<p>横軸切り口：<input type="text" name="horAxisLabel" value="切り口横" onblur="refreshImage()"></p>
+<p>縦軸切り口：<input type="text" name="vertAxisLabel" value="切り口縦" onblur="refreshImage()"></p>
+<p>縦軸上：<input type="text" name="vertAxisUpText" value="縦軸上" onblur="refreshImage()"></p>
+<p>縦軸下：<input type="text" name="vertAxisDownText" value="縦軸下" onblur="refreshImage()"></p>
+<p>横軸左：<input type="text" name="horAxisLeftText" value="横軸左" onblur="refreshImage()"></p>
+<p>横軸右：<input type="text" name="horAxisRightText" value="横軸右" onblur="refreshImage()"></p>
+<p>左上：<input type="text" name="LUText" value="左上" onblur="refreshImage()"></p>
+<p>右上：<input type="text" name="RUText" value="右上" onblur="refreshImage()"></p>
+<p>左下：<input type="text" name="LDText" value="左下" onblur="refreshImage()"></p>
+<p>右下：<input type="text" name="RDText" value="右下" onblur="refreshImage()"></p>
+
+</form>
+<head>
+<script type="text/javascript">
+function refreshImage()
+{
+  var form = document.forms.mainForm;
+
+  var canvas = document.getElementById("image_box");
+  var ctx = canvas.getContext("2d");
+  var CvsWidth=canvas.clientWidth;
+  var CvsHeight=canvas.clientWidth;
+
+  //background
+  ctx.fillStyle = "rgb(255,255,255)";
+  ctx.fillRect (0, 0, CvsWidth, CvsHeight);
+
+
+  var upMargin = CvsHeight * 0.05;
+  var rightMargin = CvsHeight * 0.05;
+  var downMargin = CvsHeight * 0.20;
+  var leftMargin = CvsWidth * 0.20;
+  
+  var rectWidth = CvsWidth - rightMargin - leftMargin;
+  var rectHeight = CvsHeight - downMargin - upMargin;
+
+  var leftEdge = leftMargin;
+  var upEdge = upMargin;
+  var downEdge = CvsHeight - downMargin;
+  var rightEdge = CvsWidth - rightMargin;
+
+  //draw frame rect  
+  ctx.strokeStyle = "rgb(0,0,0)";
+  ctx.strokeRect(leftEdge, upEdge, rectWidth, rectHeight);
+
+  //draw cross
+  var rectCenterX = (leftEdge + rightEdge) /2;
+  var rectCenterY = (upEdge + downEdge) / 2;
+  ctx.beginPath();
+  ctx.moveTo(leftEdge, rectCenterY);
+  ctx.lineTo(rightEdge, rectCenterY);
+  ctx.moveTo(rectCenterX, upEdge);
+  ctx.lineTo(rectCenterX , downEdge);
+  ctx.closePath();
+  ctx.stroke();
+
+  //text setting
+  ctx.font = '24px/2 Unknown Font, sans-serif';  
+  ctx.fillStyle = "rgb(0,0,0)";
+
+  var leftCellCenterX = (leftEdge * 3 + rightEdge) / 4;
+  var upCellCenterY = (upEdge * 3 + downEdge)/4;
+  var rightCellCenterX = (leftEdge + rightEdge * 3) / 4;
+  var downCellCenterY = (upEdge + downEdge * 3)/4;
+
+  //draw axis label
+  ctx.textAlign = "center";
+  ctx.textBaseline = "bottom";
+  ctx.fillText(form.horAxisLabel.value, rectCenterX, CvsHeight);
+  fillTextTate(ctx, form.vertAxisLabel.value, 5, rectCenterY, "left");
+
+  //draw 4 content texts
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(form.LUText.value, leftCellCenterX, upCellCenterY);
+  ctx.fillText(form.RUText.value, rightCellCenterX, upCellCenterY);
+  ctx.fillText(form.LDText.value, leftCellCenterX, downCellCenterY);
+  ctx.fillText(form.RDText.value, rightCellCenterX, downCellCenterY);
+
+  //draw axis label
+  // var textSize = ctx.measureText(form.horAxisLeftText.value);
+  ctx.textBaseline = "top";
+  ctx.textAlign = "center";
+  ctx.fillText(form.horAxisRightText.value, rightCellCenterX, downEdge);
+  ctx.fillText(form.horAxisLeftText.value, leftCellCenterX, downEdge);
+
+  var spaceX=5;
+  fillTextTate(ctx, form.vertAxisUpText.value, leftEdge - spaceX, upCellCenterY, "right");
+  fillTextTate(ctx, form.vertAxisDownText.value, leftEdge - spaceX, downCellCenterY, "right");
+}
+
+//ref : http://tmlife.net/programming/javascript/html5-canvas-vertical-writing.html
+var fillTextTate = function(context, text, x, y, textAlign) {
+  var textList = text.split('\n');
+  var lineHeight = context.measureText("あ").width;
+
+  context.textBaseline = "top";
+  context.textAlign = textAlign;
+
+  var textWidth = context.measureText(text).width;
+  y = y - textWidth / 2;
+
+  textList.forEach(function(elm, i) {
+    Array.prototype.forEach.call(elm, function(ch, j) {
+      context.fillText(ch, x-lineHeight*i, y+lineHeight*j);
+    });
+  });
+};
+
+function page_onload()
+{
+  //ref : http://webos-goodies.jp/archives/50777061.html
+  refreshImage();
+}
+</script>
+</head>
+ 
+<body onload="page_onload();">
+  <canvas id="image_box" width="480" height="480"></canvas>
+</body>
+ 
+</html>
