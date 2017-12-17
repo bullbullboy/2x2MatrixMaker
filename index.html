@@ -73,7 +73,7 @@ function refreshImage()
   ctx.textAlign = "center";
   ctx.textBaseline = "bottom";
   ctx.fillText(form.horAxisLabel.value, rectCenterX, CvsHeight);
-  fillTextTate(ctx, form.vertAxisLabel.value, 5, rectCenterY, "left");
+  fillTextTate(ctx, form.vertAxisLabel.value, ctx.measureText("あ").width, rectCenterY);
 
   //draw 4 content texts
   fillTextMultiLine(ctx, canvas, form.LUText.value, leftCellCenterX, upCellCenterY);
@@ -81,16 +81,16 @@ function refreshImage()
   fillTextMultiLine(ctx, canvas, form.LDText.value, leftCellCenterX, downCellCenterY);
   fillTextMultiLine(ctx, canvas, form.RDText.value, rightCellCenterX, downCellCenterY);
 
-  //draw axis label
+  //draw element label
   // var textSize = ctx.measureText(form.horAxisLeftText.value);
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
   ctx.fillText(form.horAxisRightText.value, rightCellCenterX, downEdge);
   ctx.fillText(form.horAxisLeftText.value, leftCellCenterX, downEdge);
 
-  var spaceX=5;
-  fillTextTate(ctx, form.vertAxisUpText.value, leftEdge - spaceX, upCellCenterY, "right");
-  fillTextTate(ctx, form.vertAxisDownText.value, leftEdge - spaceX, downCellCenterY, "right");
+  var spaceX = ctx.measureText("あ").width;
+  fillTextTate(ctx, form.vertAxisUpText.value, leftEdge - spaceX, upCellCenterY);
+  fillTextTate(ctx, form.vertAxisDownText.value, leftEdge - spaceX, downCellCenterY);
 
   //output image
   var pngImage = canvas.toDataURL();
@@ -125,12 +125,12 @@ var fillTextMultiLine = function(context, cvs, messages, x, y) {
 };
 
 //ref : http://tmlife.net/programming/javascript/html5-canvas-vertical-writing.html
-var fillTextTate = function(context, text, x, y, textAlign) {
+var fillTextTate = function(context, text, x, y) {
   var textList = text.split('\n');
   var lineHeight = context.measureText("あ").width;
 
   context.textBaseline = "top";
-  context.textAlign = textAlign;
+  context.textAlign = "center";
 
   var textWidth = context.measureText(text).width;
   y = y - textWidth / 2;
@@ -153,7 +153,7 @@ function page_onload()
 <body onload="page_onload();">
   ↓画像を保存して使用してください↓
   <div><img id="newImg"></div>
-  <div>v001.003</div>
+  <div>v001.004</div>
 </body>
  
 </html>
