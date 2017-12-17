@@ -1,5 +1,10 @@
 <html>
 2x2 マトリックス生成ツール
+<form id="typeSelector">
+  <input type="radio" name="matrixType" value="matrix" onclick="refreshImage()">マトリクス</br>
+  <input type="radio" name="matrixType" value="crossCenter" onclick="refreshImage()">十字(上下左右)</br>
+  <input type="radio" name="matrixType" value="crossUpRight" onclick="refreshImage()">十字(上右)</br>
+</form>
 <form name='mainForm' method="post" action="example.cgi">
 <p>横軸切り口：<br><input type="text" name="horAxisLabel" value="切り口横" onblur="refreshImage()"></p>
 <p>縦軸切り口：<br><input type="text" name="vertAxisLabel" value="切り口縦" onblur="refreshImage()"></p>
@@ -14,6 +19,25 @@
 </form>
 <head>
 <script type="text/javascript">
+
+var CvsWidth=480;
+var CvsHeight=480;
+var upMargin = CvsHeight * 0.05;
+var rightMargin = CvsHeight * 0.05;
+var downMargin = CvsHeight * 0.20;
+var leftMargin = CvsWidth * 0.20;
+  
+var rectWidth = CvsWidth - rightMargin - leftMargin;
+var rectHeight = CvsHeight - downMargin - upMargin;
+
+var leftEdge = leftMargin;
+var upEdge = upMargin;
+var downEdge = CvsHeight - downMargin;
+var rightEdge = CvsWidth - rightMargin;
+  
+var rectCenterX = (leftEdge + rightEdge) /2;
+var rectCenterY = (upEdge + downEdge) / 2;
+
 function refreshImage()
 {
   var form = document.forms.mainForm;
@@ -21,44 +45,34 @@ function refreshImage()
   // var canvas = document.getElementById("image_box");
   var canvas = document.createElement('canvas'); 
   canvas.id = "mycanvas";
-  canvas.height = 480;
-  canvas.width = 480;
+  canvas.height = CvsWidth;
+  canvas.width = CvsHeight;
 
   var ctx = canvas.getContext("2d");
-  var CvsWidth=canvas.height;
-  var CvsHeight=canvas.width;
 
   //background
   ctx.fillStyle = "rgb(255,255,255)";
   ctx.fillRect (0, 0, CvsWidth, CvsHeight);
-
-  var upMargin = CvsHeight * 0.05;
-  var rightMargin = CvsHeight * 0.05;
-  var downMargin = CvsHeight * 0.20;
-  var leftMargin = CvsWidth * 0.20;
   
-  var rectWidth = CvsWidth - rightMargin - leftMargin;
-  var rectHeight = CvsHeight - downMargin - upMargin;
-
-  var leftEdge = leftMargin;
-  var upEdge = upMargin;
-  var downEdge = CvsHeight - downMargin;
-  var rightEdge = CvsWidth - rightMargin;
-
-  //draw frame rect  
   ctx.strokeStyle = "rgb(0,0,0)";
-  ctx.strokeRect(leftEdge, upEdge, rectWidth, rectHeight);
+  
+  var radioButtonGroup = document.getElementById("typeSelector").matrixType;
 
-  //draw cross
-  var rectCenterX = (leftEdge + rightEdge) /2;
-  var rectCenterY = (upEdge + downEdge) / 2;
-  ctx.beginPath();
-  ctx.moveTo(leftEdge, rectCenterY);
-  ctx.lineTo(rightEdge, rectCenterY);
-  ctx.moveTo(rectCenterX, upEdge);
-  ctx.lineTo(rectCenterX , downEdge);
-  ctx.closePath();
-  ctx.stroke();
+  if(radioButtonGroup[0].checked)
+  {
+    //draw frame rect  
+    ctx.strokeRect(leftEdge, upEdge, rectWidth, rectHeight);
+
+    drawCross(ctx);
+  }
+  else if(radioButtonGroup[1].checked)
+  {
+    drawCrossWithArrow(ctx);
+  }
+  else
+  {
+    drawCrossUpRight(ctx);
+  }
 
   //text setting
   ctx.font = '24px/2 Unknown Font, sans-serif';  
@@ -82,7 +96,6 @@ function refreshImage()
   fillTextMultiLine(ctx, canvas, form.RDText.value, rightCellCenterX, downCellCenterY);
 
   //draw element label
-  // var textSize = ctx.measureText(form.horAxisLeftText.value);
   ctx.textBaseline = "top";
   ctx.textAlign = "center";
   ctx.fillText(form.horAxisRightText.value, rightCellCenterX, downEdge);
@@ -96,6 +109,69 @@ function refreshImage()
   var pngImage = canvas.toDataURL();
   document.getElementById("newImg").src = pngImage;
 }
+var arrowDelta = 16;
+
+var drawCross = function(ctx, isDot = false)
+{
+    //draw cross
+    ctx.beginPath();
+    ctx.moveTo(leftEdge, rectCenterY);
+    if(isDot)
+    {
+       ctx.setLineDash([5, 15]);
+    }
+    ctx.lineTo(rightEdge, rectCenterY);
+    ctx.moveTo(rectCenterX, upEdge);
+    ctx.lineTo(rectCenterX , downEdge);
+    ctx.closePath();
+    ctx.stroke();
+
+    if(isDot)
+    {
+      ctx.setLineDash([0])
+    }
+};
+
+var drawArrow = function(ctx, arrowDeltaX, arrowDeltaY, baseX, baseY)
+{
+  ctx.beginPath();
+  
+  ctx.moveTo(baseX, baseY);
+  ctx.lineTo(baseX + arrowDeltaX, baseY + arrowDeltaY);
+
+  ctx.moveTo(baseX, baseY);
+  ctx.lineTo(baseX + arrowDeltaY, baseY - arrowDeltaX);
+
+  ctx.closePath();
+  ctx.stroke();
+};
+
+var drawCrossWithArrow = function(ctx)
+{
+  drawCross(ctx);
+
+  drawArrow(ctx, arrowDelta, arrowDelta, leftEdge, rectCenterY);
+  drawArrow(ctx, -arrowDelta, arrowDelta, rectCenterX, upEdge);
+  drawArrow(ctx, arrowDelta, -arrowDelta, rectCenterX, downEdge);
+  drawArrow(ctx, -arrowDelta, -arrowDelta, rightEdge, rectCenterY);
+};
+
+var drawCrossUpRight = function(ctx)
+{
+  drawCross(ctx, true);
+
+  ctx.beginPath();
+  ctx.moveTo(leftEdge, upEdge);
+  ctx.lineTo(leftEdge, downEdge);
+
+  ctx.moveTo(leftEdge, downEdge);
+  ctx.lineTo(rightEdge, downEdge);
+  ctx.closePath();
+  ctx.stroke();
+
+  drawArrow(ctx, -arrowDelta, arrowDelta, leftEdge, upEdge);
+  drawArrow(ctx, -arrowDelta, -arrowDelta, rightEdge, downEdge);  
+};
 
 //ref:http://ysaam.sakura.ne.jp/dic.cgi?dic=1000095
 var fillTextMultiLine = function(context, cvs, messages, x, y) {
@@ -144,6 +220,9 @@ var fillTextTate = function(context, text, x, y) {
 
 function page_onload()
 {
+  var radioButtonGroup = document.getElementById("typeSelector").matrixType;
+  radioButtonGroup[0].checked = true;
+
   //ref : http://webos-goodies.jp/archives/50777061.html
   refreshImage();
 }
