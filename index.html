@@ -89,6 +89,9 @@ function refreshImage()
   var spaceX=5;
   fillTextTate(ctx, form.vertAxisUpText.value, leftEdge - spaceX, upCellCenterY, "right");
   fillTextTate(ctx, form.vertAxisDownText.value, leftEdge - spaceX, downCellCenterY, "right");
+
+  var pngImage = canvas.toDataURL();
+  canvas.src = pngImage;
 }
 
 //ref : http://tmlife.net/programming/javascript/html5-canvas-vertical-writing.html
