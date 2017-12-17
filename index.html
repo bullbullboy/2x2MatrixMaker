@@ -1,16 +1,16 @@
 <html>
+2x2 マトリックス生成ツール
 <form name='mainForm' method="post" action="example.cgi">
-<p>横軸切り口：<input type="text" name="horAxisLabel" value="切り口横" onblur="refreshImage()"></p>
-<p>縦軸切り口：<input type="text" name="vertAxisLabel" value="切り口縦" onblur="refreshImage()"></p>
-<p>横軸左：<input type="text" name="horAxisLeftText" value="横軸左" onblur="refreshImage()"></p>
-<p>横軸右：<input type="text" name="horAxisRightText" value="横軸右" onblur="refreshImage()"></p>
-<p>縦軸上：<input type="text" name="vertAxisUpText" value="縦軸上" onblur="refreshImage()"></p>
-<p>縦軸下：<input type="text" name="vertAxisDownText" value="縦軸下" onblur="refreshImage()"></p>
-<p>左上：<input type="text" name="LUText" value="左上" onblur="refreshImage()"></p>
-<p>右上：<input type="text" name="RUText" value="右上" onblur="refreshImage()"></p>
-<p>左下：<input type="text" name="LDText" value="左下" onblur="refreshImage()"></p>
-<p>右下：<input type="text" name="RDText" value="右下" onblur="refreshImage()"></p>
-
+<p>横軸切り口：<br><input type="text" name="horAxisLabel" value="切り口横" onblur="refreshImage()"></p>
+<p>縦軸切り口：<br><input type="text" name="vertAxisLabel" value="切り口縦" onblur="refreshImage()"></p>
+<p>横軸左：<br><input type="text" name="horAxisLeftText" value="横軸左" onblur="refreshImage()"></p>
+<p>横軸右：<br><input type="text" name="horAxisRightText" value="横軸右" onblur="refreshImage()"></p>
+<p>縦軸上：<br><input type="text" name="vertAxisUpText" value="縦軸上" onblur="refreshImage()"></p>
+<p>縦軸下：<br><input type="text" name="vertAxisDownText" value="縦軸下" onblur="refreshImage()"></p>
+<p>左上：<br><textarea name="LUText" rows="3" onblur="refreshImage()">左上</textarea></p>
+<p>右上：<br><textarea name="RUText" rows="3" onblur="refreshImage()">右上</textarea></p>
+<p>左上：<br><textarea name="LDText" rows="3" onblur="refreshImage()">左下</textarea></p>
+<p>左上：<br><textarea name="RDText" rows="3" onblur="refreshImage()">右下</textarea></p>
 </form>
 <head>
 <script type="text/javascript">
@@ -31,7 +31,6 @@ function refreshImage()
   //background
   ctx.fillStyle = "rgb(255,255,255)";
   ctx.fillRect (0, 0, CvsWidth, CvsHeight);
-
 
   var upMargin = CvsHeight * 0.05;
   var rightMargin = CvsHeight * 0.05;
@@ -62,7 +61,7 @@ function refreshImage()
   ctx.stroke();
 
   //text setting
-  ctx.font = '18px/2 Unknown Font, sans-serif';  
+  ctx.font = '24px/2 Unknown Font, sans-serif';  
   ctx.fillStyle = "rgb(0,0,0)";
 
   var leftCellCenterX = (leftEdge * 3 + rightEdge) / 4;
@@ -77,12 +76,10 @@ function refreshImage()
   fillTextTate(ctx, form.vertAxisLabel.value, 5, rectCenterY, "left");
 
   //draw 4 content texts
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(form.LUText.value, leftCellCenterX, upCellCenterY);
-  ctx.fillText(form.RUText.value, rightCellCenterX, upCellCenterY);
-  ctx.fillText(form.LDText.value, leftCellCenterX, downCellCenterY);
-  ctx.fillText(form.RDText.value, rightCellCenterX, downCellCenterY);
+  fillTextMultiLine(ctx, canvas, form.LUText.value, leftCellCenterX, upCellCenterY);
+  fillTextMultiLine(ctx, canvas, form.RUText.value, rightCellCenterX, upCellCenterY);
+  fillTextMultiLine(ctx, canvas, form.LDText.value, leftCellCenterX, downCellCenterY);
+  fillTextMultiLine(ctx, canvas, form.RDText.value, rightCellCenterX, downCellCenterY);
 
   //draw axis label
   // var textSize = ctx.measureText(form.horAxisLeftText.value);
@@ -99,6 +96,33 @@ function refreshImage()
   var pngImage = canvas.toDataURL();
   document.getElementById("newImg").src = pngImage;
 }
+
+//ref:http://ysaam.sakura.ne.jp/dic.cgi?dic=1000095
+var fillTextMultiLine = function(context, cvs, messages, x, y) {
+  var cw = cvs.width - 10; // 10...margin
+  var cx = x;
+  var cy;
+  var cyp = 0;
+  var mess = "";
+  var messArry = messages.split("\n");
+  var charHeight = 24;//TODO:改行幅ハードコーディング修正
+
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+
+  var textTotalHeight = charHeight * messArry.length;
+  cy = y - (messArry.length - 1) * 0.5 * charHeight;
+
+  for ( var i = 0; i < messArry.length; i++){
+    mess += messArry[i];
+    var textwid = context.measureText(mess).width;
+    if ( cw > textwid ){
+       context.fillText(mess, cx, cy + cyp);
+       cyp += charHeight;
+       mess = "";
+    }
+  }
+};
 
 //ref : http://tmlife.net/programming/javascript/html5-canvas-vertical-writing.html
 var fillTextTate = function(context, text, x, y, textAlign) {
@@ -127,7 +151,9 @@ function page_onload()
 </head>
  
 <body onload="page_onload();">
+  ↓画像を保存して使用してください↓
   <div><img id="newImg"></div>
+  <div>v001.003</div>
 </body>
  
 </html>
