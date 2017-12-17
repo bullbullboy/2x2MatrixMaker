@@ -18,10 +18,15 @@ function refreshImage()
 {
   var form = document.forms.mainForm;
 
-  var canvas = document.getElementById("image_box");
+  // var canvas = document.getElementById("image_box");
+  var canvas = document.createElement('canvas'); 
+  canvas.id = "mycanvas";
+  canvas.height = 480;
+  canvas.width = 480;
+
   var ctx = canvas.getContext("2d");
-  var CvsWidth=canvas.clientWidth;
-  var CvsHeight=canvas.clientWidth;
+  var CvsWidth=canvas.height;
+  var CvsHeight=canvas.width;
 
   //background
   ctx.fillStyle = "rgb(255,255,255)";
@@ -90,8 +95,9 @@ function refreshImage()
   fillTextTate(ctx, form.vertAxisUpText.value, leftEdge - spaceX, upCellCenterY, "right");
   fillTextTate(ctx, form.vertAxisDownText.value, leftEdge - spaceX, downCellCenterY, "right");
 
+  //output image
   var pngImage = canvas.toDataURL();
-  canvas.src = pngImage;
+  document.getElementById("newImg").src = pngImage;
 }
 
 //ref : http://tmlife.net/programming/javascript/html5-canvas-vertical-writing.html
@@ -121,7 +127,7 @@ function page_onload()
 </head>
  
 <body onload="page_onload();">
-  <canvas id="image_box" width="480" height="480"></canvas>
+  <div><img id="newImg"></div>
 </body>
  
 </html>
