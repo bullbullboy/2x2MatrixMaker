@@ -2,10 +2,10 @@
 <form name='mainForm' method="post" action="example.cgi">
 <p>横軸切り口：<input type="text" name="horAxisLabel" value="切り口横" onblur="refreshImage()"></p>
 <p>縦軸切り口：<input type="text" name="vertAxisLabel" value="切り口縦" onblur="refreshImage()"></p>
-<p>縦軸上：<input type="text" name="vertAxisUpText" value="縦軸上" onblur="refreshImage()"></p>
-<p>縦軸下：<input type="text" name="vertAxisDownText" value="縦軸下" onblur="refreshImage()"></p>
 <p>横軸左：<input type="text" name="horAxisLeftText" value="横軸左" onblur="refreshImage()"></p>
 <p>横軸右：<input type="text" name="horAxisRightText" value="横軸右" onblur="refreshImage()"></p>
+<p>縦軸上：<input type="text" name="vertAxisUpText" value="縦軸上" onblur="refreshImage()"></p>
+<p>縦軸下：<input type="text" name="vertAxisDownText" value="縦軸下" onblur="refreshImage()"></p>
 <p>左上：<input type="text" name="LUText" value="左上" onblur="refreshImage()"></p>
 <p>右上：<input type="text" name="RUText" value="右上" onblur="refreshImage()"></p>
 <p>左下：<input type="text" name="LDText" value="左下" onblur="refreshImage()"></p>
@@ -62,7 +62,7 @@ function refreshImage()
   ctx.stroke();
 
   //text setting
-  ctx.font = '24px/2 Unknown Font, sans-serif';  
+  ctx.font = '18px/2 Unknown Font, sans-serif';  
   ctx.fillStyle = "rgb(0,0,0)";
 
   var leftCellCenterX = (leftEdge * 3 + rightEdge) / 4;
