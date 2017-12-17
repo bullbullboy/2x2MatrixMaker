@@ -158,8 +158,6 @@ var drawCrossWithArrow = function(ctx)
 
 var drawCrossUpRight = function(ctx)
 {
-  drawCross(ctx, true);
-
   ctx.beginPath();
   ctx.moveTo(leftEdge, upEdge);
   ctx.lineTo(leftEdge, downEdge);
@@ -170,7 +168,9 @@ var drawCrossUpRight = function(ctx)
   ctx.stroke();
 
   drawArrow(ctx, -arrowDelta, arrowDelta, leftEdge, upEdge);
-  drawArrow(ctx, -arrowDelta, -arrowDelta, rightEdge, downEdge);  
+  drawArrow(ctx, -arrowDelta, -arrowDelta, rightEdge, downEdge);
+
+  drawCross(ctx, true);
 };
 
 //ref:http://ysaam.sakura.ne.jp/dic.cgi?dic=1000095
@@ -232,7 +232,7 @@ function page_onload()
 <body onload="page_onload();">
   ↓画像を保存して使用してください↓
   <div><img id="newImg"></div>
-  <div>v001.004</div>
+  <div>v001.005</div>
 </body>
  
 </html>
